@@ -48,9 +48,30 @@ export default function Hero() {
       return;
     }
 
-    let seeking = false;
-    const onSeeked = () => { seeking = false; };
+    // Pending-seek pattern: while a seek is in flight, track the latest
+    // target and apply it immediately on seeked — eliminates drift under
+    // fast scrolling without flooding the browser with queued seeks.
+    let isSeeking  = false;
+    let pendingTime: number | null = null;
+
+    const onSeeked = () => {
+      isSeeking = false;
+      if (pendingTime !== null) {
+        video.currentTime = pendingTime;
+        pendingTime = null;
+        isSeeking   = true;
+      }
+    };
     video.addEventListener('seeked', onSeeked);
+
+    const seekTo = (t: number) => {
+      if (isSeeking) {
+        pendingTime = t;     // overwrite — keep only the freshest target
+      } else {
+        video.currentTime = t;
+        isSeeking = true;
+      }
+    };
 
     const setup = () => {
       const duration = video.duration;
@@ -60,19 +81,13 @@ export default function Hero() {
         trigger: wrapper,
         start: 'top top',
         end: 'bottom bottom',
-        scrub: 0.4,
+        scrub: 0.2,          // tighter follow reduces perceived lag
         invalidateOnRefresh: true,
         onUpdate: (self) => {
           const p = self.progress;
 
-          // Scrub video
-          if (!seeking) {
-            const target = p * duration;
-            if (Math.abs(video.currentTime - target) > 0.016) {
-              video.currentTime = target;
-              seeking = true;
-            }
-          }
+          const target = p * duration;
+          if (Math.abs(video.currentTime - target) > 0.016) seekTo(target);
 
           // Progress bar
           if (progressRef.current)
@@ -213,6 +228,8 @@ export default function Hero() {
             muted
             playsInline
             preload="auto"
+            autoPlay={isMobile}
+            loop={isMobile}
             className="absolute inset-0 w-full h-full object-cover"
             style={{ opacity: 1 }}
           >
