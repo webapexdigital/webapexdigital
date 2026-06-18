@@ -111,7 +111,7 @@ export default function Hero() {
   return (
     <>
       {/* ── Floating Pill Navbar ──────────────────────────────────────────────── */}
-      <header className="fixed top-3 sm:top-4 inset-x-0 z-[100] flex justify-center px-3 sm:px-6 pointer-events-none">
+      <header className="fixed top-3 sm:top-4 inset-x-0 z-[200] flex justify-center px-3 sm:px-6 pointer-events-none">
         <div
           className="flex items-center w-full max-w-5xl px-3 sm:px-5 py-1.5 sm:py-2 rounded-full pointer-events-auto"
           style={{
@@ -160,7 +160,7 @@ export default function Hero() {
 
           {/* Mobile hamburger */}
           <button
-            className="md:hidden ml-auto flex items-center justify-center p-2 cursor-pointer min-w-[44px] min-h-[44px] text-[#0D0D2B]"
+            className="md:hidden ml-auto flex items-center justify-center p-2 cursor-pointer min-w-[44px] min-h-[44px] text-[#0D0D2B] focus:outline-none rounded-full"
             onClick={() => setMobileMenuOpen(o => !o)}
             aria-label="Toggle menu"
           >
@@ -172,9 +172,9 @@ export default function Hero() {
         </div>
       </header>
 
-      {/* Mobile full-screen menu */}
+      {/* Mobile full-screen menu — z-[150] beats sticky/will-change stacking contexts in hero */}
       <div
-        className={`md:hidden fixed inset-0 z-[99] bg-white/96 backdrop-blur-sm flex flex-col items-center justify-center gap-8 transition-all duration-300 ${
+        className={`md:hidden fixed inset-0 z-[150] bg-white flex flex-col items-center justify-center gap-8 transition-opacity duration-300 ${
           mobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
       >
