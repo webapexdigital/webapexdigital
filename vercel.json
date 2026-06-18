@@ -1,0 +1,7 @@
+{
+  "buildCommand": "cd apex-digital && npm install && npm run build",
+  "outputDirectory": "apex-digital/dist",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/" }
+  ]
+}
