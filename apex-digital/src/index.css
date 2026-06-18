@@ -1,0 +1,192 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Custom Fonts ───────────────────────────────────────────────────────── */
+@font-face {
+  font-family: 'PP Neue Montreal';
+  src: url('https://assets.website-files.com/6009ec8cda7f305645c9d91b/60176f9bb43e36419997ecfe_PPNeueMontreal-Book.otf') format('opentype');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'PP Neue Montreal';
+  src: url('https://assets.website-files.com/6009ec8cda7f305645c9d91b/60176f9b39c5673e51a86f5a_PPNeueMontreal-Medium.otf') format('opentype');
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'PP Mondwest';
+  src: url('/PPMondwest-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+
+.font-mondwest {
+  font-family: 'PP Mondwest', Georgia, serif;
+}
+
+/* ─── Brand tokens ───────────────────────────────────────────────────────── */
+:root {
+  /* Backgrounds */
+  --bg:           #FFFFFF;
+  --bg-alt:       #F0F0FF;
+  --bg-card:      #FFFFFF;
+
+  /* Text */
+  --navy:         #0D0D2B;
+  --body:         #4B5563;
+  --muted:        #9CA3AF;
+
+  /* Accent */
+  --blue:         #0099FF;
+  --blue-deep:    #185fa5;
+  --purple:       #7B3CE8;
+  --purple-deep:  #3c3489;
+
+  /* Gradient */
+  --gradient:       linear-gradient(135deg, #0099FF, #7B3CE8);
+  --gradient-soft:  linear-gradient(135deg, rgba(0,153,255,0.08), rgba(123,60,232,0.08));
+  --gradient-hero:  linear-gradient(160deg, #F8F9FF 0%, #EEF3FF 50%, #F0EEFF 100%);
+
+  /* Borders & shadows */
+  --border:       #E5E7EB;
+  --shadow-sm:    0 2px 8px rgba(13,13,43,0.06);
+  --shadow-md:    0 8px 32px rgba(13,13,43,0.10);
+  --shadow-glow:  0 0 60px rgba(0,153,255,0.20);
+}
+
+/* ─── Base reset ─────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: auto; /* Lenis handles smooth scroll */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Hide scrollbar, keep function */
+::-webkit-scrollbar { display: none; }
+html { scrollbar-width: none; -ms-overflow-style: none; }
+
+body {
+  font-family: 'PP Neue Montreal', 'Inter', sans-serif;
+  background-color: var(--bg);
+  color: var(--body);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* ─── Typography ─────────────────────────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--navy);
+}
+
+/* ─── Utilities ──────────────────────────────────────────────────────────── */
+.gradient-text {
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-bg {
+  background: var(--gradient);
+}
+
+.gradient-border {
+  position: relative;
+  background: var(--bg-card);
+  border-radius: inherit;
+}
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: var(--gradient);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.container {
+  max-width: 80rem;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+.section {
+  padding-block: 6rem;
+}
+@media (min-width: 768px) {
+  .section { padding-block: 8rem; }
+}
+
+/* ─── Keyframe animations ───────────────────────────────────────────────── */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-14px); }
+}
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50%       { opacity: 1;   transform: scale(1.05); }
+}
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes bounce-y {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-6px); }
+}
+
+.animate-float     { animation: float 4s ease-in-out infinite; }
+.animate-spin-slow { animation: spin-slow 20s linear infinite; }
+.animate-bounce-y  { animation: bounce-y 2s ease-in-out infinite; }
+
+/* Typewriter cursor blink */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+.animate-blink { animation: blink 1s step-end infinite; }
+
+/* Marquee */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+  will-change: transform;
+}
+@media (max-width: 768px) {
+  .animate-marquee { animation-duration: 10s; }
+}
+
+/* Scroll-triggered fade up */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out forwards;
+}
