@@ -55,6 +55,29 @@ export default function GlowRevealCard({
     return () => ro.disconnect();
   }, []);
 
+  // Reset the reveal mask whenever the card scrolls out of view
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) {
+          // Clear mask — next visit starts fresh
+          const mc = maskCanvas.current;
+          const dc = displayCanvas.current;
+          if (mc) mc.getContext('2d')?.clearRect(0, 0, mc.width, mc.height);
+          if (dc) dc.getContext('2d')?.clearRect(0, 0, dc.width, dc.height);
+          setCursorPos(null);
+        }
+      },
+      { threshold: 0.1 }, // reset once less than 10% is visible
+    );
+
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, []);
+
   const paint = useCallback((clientX: number, clientY: number) => {
     const dc = displayCanvas.current;
     const mc = maskCanvas.current;
