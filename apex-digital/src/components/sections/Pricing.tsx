@@ -8,10 +8,9 @@ const TIERS: PricingTier[] = [
     icon: <Film className="w-5 h-5" />,
     iconColor: '#0099FF',
     pricePoints: [
-      { label: '30 sec', amount: '₹2,000' },
-      { label: '60 sec', amount: '₹3,500' },
+      { label: 'Pricing', amount: 'Custom' },
     ],
-    priceNote: 'per video · no monthly commitment',
+    priceNote: 'scoped to your brief & format',
     description: 'Scroll-stopping ads crafted by AI.',
     features: [
       'Script & storyboard included',
@@ -46,9 +45,9 @@ const TIERS: PricingTier[] = [
     icon: <Globe className="w-5 h-5" />,
     iconColor: '#0099FF',
     pricePoints: [
-      { label: 'Starting at', amount: '₹15,000' },
+      { label: 'Pricing', amount: 'Custom' },
     ],
-    priceNote: 'custom scope for complex builds',
+    priceNote: 'scoped to your project scope',
     description: 'Websites that are the product demo.',
     features: [
       'Scroll-driven 3D experience',
@@ -67,7 +66,7 @@ export default function PricingSection() {
       <CreativePricing
         tag="PRICING"
         title={'Simple pricing.\nNo retainers.'}
-        description="Pay per project. No lock-ins, no surprises."
+        description="Every project is scoped to your goals. No lock-ins, no surprises."
         tiers={TIERS}
       />
     </section>

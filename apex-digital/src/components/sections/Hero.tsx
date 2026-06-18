@@ -64,9 +64,9 @@ export default function Hero() {
 
     let cancelled = false;
 
-    // Hidden capture video — browser reuses the cached response for /herovid.mp4
+    // Hidden capture video — browser reuses the cached response for /herovid.webm
     const cap = document.createElement('video');
-    cap.src     = '/herovid.mp4';
+    cap.src     = '/herovid.webm';
     cap.muted   = true;
     cap.preload = 'auto';
 
@@ -340,6 +340,7 @@ export default function Hero() {
               transition: 'opacity 0.5s',
             }}
           >
+            {!isMobile && <source src="/herovid.webm" type="video/webm" />}
             <source src={isMobile ? '/herovid-mob.mp4' : '/herovid.mp4'} type="video/mp4" />
           </video>
 
