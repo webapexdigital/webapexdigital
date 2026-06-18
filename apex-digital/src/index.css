@@ -190,3 +190,10 @@ h1, h2, h3, h4, h5, h6 {
 .animate-fade-in-up {
   animation: fadeInUp 0.8s ease-out forwards;
 }
+
+/* Orb proximity pulse ring */
+@keyframes glowPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(123,60,232,0.8); opacity: 1; transform: scale(0.6); }
+  60%  { box-shadow: 0 0 0 40px rgba(0,153,255,0.25); opacity: 0.6; transform: scale(1.1); }
+  100% { box-shadow: 0 0 0 80px rgba(123,60,232,0); opacity: 0; transform: scale(1.3); }
+}

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Menu, X } from 'lucide-react';
 import { useGSAP } from '@gsap/react';
 import { gsap, ScrollTrigger } from '../../lib/gsap';
+import { LiquidButton } from '../ui/liquid-glass-button';
 
 const NAV_LINKS = ['Services', 'Work', 'Process', 'Contact'];
 const SCROLL_MULT = 4;
@@ -48,31 +49,6 @@ export default function Hero() {
       return;
     }
 
-    // Pending-seek pattern: while a seek is in flight, track the latest
-    // target and apply it immediately on seeked — eliminates drift under
-    // fast scrolling without flooding the browser with queued seeks.
-    let isSeeking  = false;
-    let pendingTime: number | null = null;
-
-    const onSeeked = () => {
-      isSeeking = false;
-      if (pendingTime !== null) {
-        video.currentTime = pendingTime;
-        pendingTime = null;
-        isSeeking   = true;
-      }
-    };
-    video.addEventListener('seeked', onSeeked);
-
-    const seekTo = (t: number) => {
-      if (isSeeking) {
-        pendingTime = t;     // overwrite — keep only the freshest target
-      } else {
-        video.currentTime = t;
-        isSeeking = true;
-      }
-    };
-
     const setup = () => {
       const duration = video.duration;
       if (!duration || isNaN(duration)) return;
@@ -81,13 +57,22 @@ export default function Hero() {
         trigger: wrapper,
         start: 'top top',
         end: 'bottom bottom',
-        scrub: 0.2,          // tighter follow reduces perceived lag
+        // scrub:1 — GSAP smoothly chases scroll over 1 s, giving the
+        // browser a full animation frame to decode each keyframe before
+        // the next seek lands. Tighter values compound with decode time
+        // and produce visible jitter.
+        scrub: 1,
         invalidateOnRefresh: true,
         onUpdate: (self) => {
           const p = self.progress;
 
+          // One seek per frame (0.033 = 30 fps threshold).
+          // Modern browsers discard in-flight seeks automatically —
+          // no guard state needed.
           const target = p * duration;
-          if (Math.abs(video.currentTime - target) > 0.016) seekTo(target);
+          if (Math.abs(video.currentTime - target) > 0.033) {
+            video.currentTime = target;
+          }
 
           // Progress bar
           if (progressRef.current)
@@ -113,7 +98,7 @@ export default function Hero() {
     if (video.readyState >= 1) setup();
     else video.addEventListener('loadedmetadata', setup, { once: true });
 
-    return () => { video.removeEventListener('seeked', onSeeked); };
+    return () => { ScrollTrigger.getAll().forEach(t => t.kill()); };
   }, []);
 
   void gsap;
@@ -284,18 +269,20 @@ export default function Hero() {
             className="absolute bottom-8 sm:bottom-16 left-0 right-0 flex flex-col sm:flex-row justify-center items-center gap-3 px-5 sm:px-6"
             style={{ opacity: isMobile ? 1 : 0, willChange: 'opacity, transform' }}
           >
-            <button
+            <LiquidButton
               onClick={() => scrollTo('#work')}
-              className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 rounded-full bg-white text-[#0D0D2B] text-[15px] font-medium hover:opacity-90 active:scale-[0.98] transition-all duration-200 cursor-pointer select-none min-h-[48px]"
+              size="xl"
+              className="w-full sm:w-auto text-[15px] font-semibold text-white min-h-[48px]"
             >
               See our work
-            </button>
-            <button
+            </LiquidButton>
+            <LiquidButton
               onClick={() => scrollTo('#contact')}
-              className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 rounded-full border border-white/40 text-white text-[15px] font-medium hover:bg-white/10 active:scale-[0.98] transition-all duration-200 cursor-pointer select-none backdrop-blur-sm min-h-[48px]"
+              size="xl"
+              className="w-full sm:w-auto text-[15px] font-semibold text-white/90 min-h-[48px]"
             >
               Get in touch
-            </button>
+            </LiquidButton>
           </div>
 
           {/* Progress bar — desktop only */}

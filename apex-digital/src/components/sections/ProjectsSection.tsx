@@ -3,15 +3,10 @@ import { useGSAP } from '@gsap/react';
 import { gsap } from '../../lib/gsap';
 import { SpeedLinesBackground } from '../ui/speed-lines-shader';
 import { ArrowUpRight } from 'lucide-react';
+import GlowRevealCard from '../ui/GlowRevealCard';
+import InteractivePortrait from '../ui/InteractivePortrait';
 
-const PROJECTS = [
-  {
-    tag: 'AI Video',
-    name: 'Orion AI',
-    description: 'AI video campaign that generated $2M in attributed revenue for a Series A SaaS startup',
-    result: '$2M revenue',
-    img: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=800&q=80',
-  },
+const SECONDARY_PROJECTS = [
   {
     tag: 'Automation',
     name: 'AutoFlow',
@@ -31,6 +26,7 @@ const PROJECTS = [
 export default function ProjectsSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const headRef    = useRef<HTMLDivElement>(null);
+  const featRef    = useRef<HTMLDivElement>(null);
   const cardsRef   = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
@@ -38,10 +34,14 @@ export default function ProjectsSection() {
       y: 40, opacity: 0, duration: 0.9, ease: 'power3.out',
       scrollTrigger: { trigger: sectionRef.current, start: 'top 80%' },
     });
+    gsap.from(featRef.current, {
+      y: 60, opacity: 0, duration: 1, ease: 'power3.out',
+      scrollTrigger: { trigger: featRef.current, start: 'top 82%' },
+    });
     if (cardsRef.current) {
       gsap.from(Array.from(cardsRef.current.children), {
         y: 50, opacity: 0, duration: 0.75, ease: 'power2.out', stagger: 0.15,
-        scrollTrigger: { trigger: cardsRef.current, start: 'top 78%' },
+        scrollTrigger: { trigger: cardsRef.current, start: 'top 82%' },
       });
     }
   }, []);
@@ -49,12 +49,12 @@ export default function ProjectsSection() {
   return (
     <section ref={sectionRef} id="work" className="relative overflow-hidden py-24 md:py-32">
 
-      {/* Shader background — fixed to section */}
+      {/* Shader background */}
       <div className="absolute inset-0 z-0">
         <SpeedLinesBackground className="w-full h-full" />
       </div>
 
-      {/* Dark vignette overlay so text reads clearly */}
+      {/* Vignette */}
       <div
         className="absolute inset-0 z-[1] pointer-events-none"
         style={{
@@ -64,8 +64,9 @@ export default function ProjectsSection() {
       />
 
       <div className="relative z-[2] max-w-7xl mx-auto px-6">
+
         {/* Header */}
-        <div ref={headRef} className="mb-14 md:mb-18">
+        <div ref={headRef} className="mb-12 md:mb-16">
           <p className="text-[11px] font-medium text-white/50 uppercase tracking-[0.22em] mb-4">
             OUR WORK
           </p>
@@ -76,9 +77,82 @@ export default function ProjectsSection() {
           </h2>
         </div>
 
-        {/* Cards grid */}
-        <div ref={cardsRef} className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {PROJECTS.map((p) => (
+        {/* ── Featured card: Orion AI — tilt + glow reveal ────────── */}
+        <div ref={featRef} className="mb-5">
+          <InteractivePortrait className="rounded-2xl overflow-hidden"
+            style={{
+              border: '1px solid rgba(255,255,255,0.12)',
+              boxShadow: '0 0 60px rgba(123,60,232,0.18)',
+            }}
+          >
+            <GlowRevealCard
+              baseImg="/apexpic.png"
+              glowImg="/apexpic-glow.png"
+              alt="Orion AI project"
+              className="w-full h-[320px] sm:h-[420px] md:h-[540px]"
+            >
+              {/* Content bar at bottom */}
+              <div
+                className="p-6 md:p-8"
+                style={{
+                  background: 'linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.4) 60%, transparent 100%)',
+                }}
+              >
+                <span className="inline-block text-[10px] font-semibold uppercase tracking-[0.18em] text-[#0099FF] mb-3">
+                  Interactive 3D Experience
+                </span>
+                <div className="flex items-end justify-between gap-4">
+                  <div>
+                    <h3 className="font-mondwest text-2xl md:text-3xl lg:text-4xl text-white mb-2 leading-snug">
+                      Your brand,<br className="hidden sm:block" /> built to be felt.
+                    </h3>
+                    <p className="text-sm md:text-base text-white/55 max-w-lg leading-relaxed">
+                      What you're doing right now — tilting, painting, exploring — is exactly what your customers experience. We build websites that people can't stop touching.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3 shrink-0">
+                    <span
+                      className="text-xs font-semibold px-3 py-1.5 rounded-full hidden sm:inline-block"
+                      style={{
+                        background: 'rgba(123,60,232,0.18)',
+                        border: '1px solid rgba(123,60,232,0.35)',
+                        color: '#b57bff',
+                      }}
+                    >
+                      3D · AI · Motion
+                    </span>
+                    <span
+                      className="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 hover:scale-110"
+                      style={{
+                        background: 'rgba(255,255,255,0.10)',
+                        border: '1px solid rgba(255,255,255,0.18)',
+                      }}
+                    >
+                      <ArrowUpRight className="w-4 h-4 text-white" strokeWidth={1.8} />
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </GlowRevealCard>
+
+            {/* Hint pill */}
+            <div
+              className="absolute top-4 right-4 pointer-events-none flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] text-white/70 font-medium z-10"
+              style={{
+                background: 'rgba(255,255,255,0.08)',
+                border: '1px solid rgba(255,255,255,0.14)',
+                backdropFilter: 'blur(8px)',
+              }}
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-[#7B3CE8] animate-pulse-glow inline-block" />
+              Paint to reveal
+            </div>
+          </InteractivePortrait>
+        </div>
+
+        {/* ── Secondary cards ───────────────────────────────────── */}
+        <div ref={cardsRef} className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {SECONDARY_PROJECTS.map((p) => (
             <div
               key={p.name}
               className="group relative rounded-2xl overflow-hidden cursor-pointer"
@@ -89,7 +163,6 @@ export default function ProjectsSection() {
                 WebkitBackdropFilter: 'blur(12px)',
               }}
             >
-              {/* Image */}
               <div className="relative overflow-hidden h-52 md:h-60">
                 <img
                   src={p.img}
@@ -99,8 +172,6 @@ export default function ProjectsSection() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
               </div>
-
-              {/* Content */}
               <div className="p-5 md:p-6">
                 <span className="inline-block text-[10px] font-semibold uppercase tracking-[0.18em] text-[#0099FF] mb-3">
                   {p.tag}
@@ -111,7 +182,6 @@ export default function ProjectsSection() {
                 <p className="text-sm text-white/55 leading-relaxed mb-5">
                   {p.description}
                 </p>
-
                 <div className="flex items-center justify-between">
                   <span
                     className="text-xs font-semibold px-3 py-1.5 rounded-full"
@@ -137,6 +207,7 @@ export default function ProjectsSection() {
             </div>
           ))}
         </div>
+
       </div>
     </section>
   );
