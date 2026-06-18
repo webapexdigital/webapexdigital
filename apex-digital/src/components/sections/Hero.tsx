@@ -214,8 +214,8 @@ export default function Hero() {
             className="absolute inset-0 w-full h-full object-cover"
             style={{ opacity: 1 }}
           >
-            <source src="/herovid.mp4"  type="video/mp4" />
-            <source src="/herovid.webm" type="video/webm" />
+            <source src={isMobile ? '/herovid-mob.mp4' : '/herovid.mp4'} type="video/mp4" />
+            {!isMobile && <source src="/herovid.webm" type="video/webm" />}
           </video>
 
           {/* Scrims */}

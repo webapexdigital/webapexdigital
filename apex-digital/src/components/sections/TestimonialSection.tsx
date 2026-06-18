@@ -105,48 +105,14 @@ export default function AutomationSection() {
             </ul>
           </div>
 
-          {/* ── Right: enlarged glowing logo ─────────────────────── */}
-          <div className="flex items-center justify-center">
-            <div
-              ref={logoCardRef}
-              className="relative w-full max-w-sm aspect-square rounded-3xl flex items-center justify-center overflow-hidden"
-              style={{
-                background:
-                  'radial-gradient(ellipse at 50% 35%, #0d1a3a 0%, #0D0D2B 55%, #000 100%)',
-              }}
-            >
-              {/* Blue ambient blob — top */}
-              <div
-                className="absolute rounded-full blur-3xl"
-                style={{
-                  width: '70%', height: '70%',
-                  top: '-10%', left: '5%',
-                  background: 'radial-gradient(circle, rgba(0,153,255,0.45) 0%, transparent 70%)',
-                }}
-              />
-              {/* Purple ambient blob — bottom-right */}
-              <div
-                className="absolute rounded-full blur-3xl"
-                style={{
-                  width: '55%', height: '55%',
-                  bottom: '-5%', right: '5%',
-                  background: 'radial-gradient(circle, rgba(123,60,232,0.40) 0%, transparent 70%)',
-                }}
-              />
-
-              {/* Logo */}
-              <img
-                src="/apex-logo.png"
-                alt="Apex Digital"
-                className="relative z-10 w-[62%] select-none"
-                style={{
-                  filter:
-                    'drop-shadow(0 0 28px rgba(0,153,255,0.90))' +
-                    ' drop-shadow(0 0 72px rgba(123,60,232,0.65))' +
-                    ' drop-shadow(0 0 120px rgba(0,153,255,0.30))',
-                }}
-              />
-            </div>
+          {/* ── Right: floating image ────────────────────────────── */}
+          <div ref={logoCardRef} className="flex items-center justify-center">
+            <img
+              src="/apexpic.png"
+              alt="Apex Digital"
+              className="w-full max-w-[560px] select-none animate-float"
+              style={{ willChange: 'transform' }}
+            />
           </div>
 
         </div>
