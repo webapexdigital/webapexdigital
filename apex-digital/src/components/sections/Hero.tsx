@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { Menu, X } from 'lucide-react';
 import { useGSAP } from '@gsap/react';
 import { gsap, ScrollTrigger } from '../../lib/gsap';
 
@@ -159,13 +160,14 @@ export default function Hero() {
 
           {/* Mobile hamburger */}
           <button
-            className="md:hidden ml-auto flex flex-col gap-[5px] p-2 cursor-pointer min-w-[44px] min-h-[44px] items-center justify-center"
+            className="md:hidden ml-auto flex items-center justify-center p-2 cursor-pointer min-w-[44px] min-h-[44px] text-[#0D0D2B]"
             onClick={() => setMobileMenuOpen(o => !o)}
             aria-label="Toggle menu"
           >
-            <span className={`block w-5 h-[2px] bg-[#0D0D2B] transition-all duration-300 ${mobileMenuOpen ? 'rotate-45 translate-y-[7px]' : ''}`} />
-            <span className={`block w-5 h-[2px] bg-[#0D0D2B] transition-all duration-300 ${mobileMenuOpen ? 'opacity-0'                   : ''}`} />
-            <span className={`block w-5 h-[2px] bg-[#0D0D2B] transition-all duration-300 ${mobileMenuOpen ? '-rotate-45 -translate-y-[7px]' : ''}`} />
+            {mobileMenuOpen
+              ? <X className="w-5 h-5" strokeWidth={2} />
+              : <Menu className="w-5 h-5" strokeWidth={2} />
+            }
           </button>
         </div>
       </header>
