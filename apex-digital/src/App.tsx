@@ -4,6 +4,7 @@ import MarqueeSection    from './components/sections/MarqueeSection';
 import TestimonialSection from './components/sections/TestimonialSection';
 import PricingSection    from './components/sections/Pricing';
 import TestimonialCarousel from './components/sections/TestimonialCarousel';
+import ClientProof       from './components/sections/ClientProof';
 import ProjectsSection   from './components/sections/ProjectsSection';
 import PartnerSection    from './components/sections/PartnerSection';
 import Footer            from './components/ui/Footer';
@@ -18,6 +19,7 @@ export default function App() {
       <TestimonialSection />
       <PricingSection />
       <TestimonialCarousel />
+      <ClientProof />
       <ProjectsSection />
       <PartnerSection />
       <Footer />

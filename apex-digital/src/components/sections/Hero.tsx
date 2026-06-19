@@ -173,45 +173,62 @@ export default function Hero() {
       const duration = video.duration;
       if (!duration || isNaN(duration)) return;
 
+      // FRAME_SPEED: video plays through by ~50% scroll, then holds last frame.
+      // Per 3d-scroll-SKILL: "product animation completes by ~55% scroll.
+      // Below 1.8 feels sluggish." Range 1.8-2.2.
+      const FRAME_SPEED = 2.0;
+
       ScrollTrigger.create({
         trigger: wrapper,
         start: 'top top',
         end: 'bottom bottom',
-        scrub: 0.5,
+        scrub: true,          // zero GSAP lag — directly tied to scrollbar position
         invalidateOnRefresh: true,
         onUpdate: (self) => {
           const p = self.progress;
 
-          // Frame cache path: O(1) array lookup, no decode, no seek —
-          // drawImage(ImageBitmap) is a zero-copy GPU blit.
+          // ── Frame sequence ───────────────────────────────────────────────
           const frames = framesRef.current;
           if (readyRef.current && frames.length > 0) {
             const canvas = canvasRef.current;
             const ctx    = canvas?.getContext('2d');
             if (canvas && ctx) {
+              // Accelerated mapping: video done at p = 1/FRAME_SPEED (50%)
+              const accelerated = Math.min(p * FRAME_SPEED, 1);
               const i = Math.min(
-                Math.round(p * (frames.length - 1)),
+                Math.floor(accelerated * frames.length),
                 frames.length - 1,
               );
               if (frames[i]) drawCover(ctx, frames[i], canvas.width, canvas.height);
+
+              // Circle-wipe reveal — per 3d-scroll-SKILL §6i
+              // canvas expands from circle(0%) to circle(80%) between p=0.01→0.08
+              const wipeP = Math.min(1, Math.max(0, (p - 0.01) / 0.07));
+              canvas.style.clipPath = wipeP >= 1
+                ? 'none'
+                : `circle(${wipeP * 80}% at 50% 50%)`;
             }
           } else {
-            // While frames are still being captured: fall back to video seek
-            const t = p * duration;
+            // Fallback video seek while frames are still being extracted
+            const t = Math.min(p * FRAME_SPEED, 1) * duration;
             if (Math.abs(video.currentTime - t) > 0.033) video.currentTime = t;
           }
 
+          // ── Progress bar ─────────────────────────────────────────────────
           if (progressRef.current)
             progressRef.current.style.transform = `scaleX(${p})`;
 
+          // ── Headline: fades out fast (gone by p=0.08) ────────────────────
+          // Per skill: hero content should exit quickly so video takes focus
           if (headlineRef.current) {
-            const hp = Math.min(p / 0.12, 1);
+            const hp = Math.min(p / 0.08, 1);
             headlineRef.current.style.opacity  = String(1 - hp);
-            headlineRef.current.style.transform = `translateY(${hp * -28}px)`;
+            headlineRef.current.style.transform = `translateY(${hp * -36}px)`;
           }
 
+          // ── CTAs: fade in from 55% → 75% (after video completes) ─────────
           if (ctaRef.current) {
-            const cp = Math.max(0, (p - 0.82) / 0.18);
+            const cp = Math.max(0, (p - 0.55) / 0.20);
             ctaRef.current.style.opacity  = String(cp);
             ctaRef.current.style.transform = `translateY(${(1 - cp) * 18}px)`;
           }
@@ -345,8 +362,8 @@ export default function Hero() {
           </video>
 
           {/* Frame canvas — replaces video on desktop once extraction completes.
-              CSS width/height 100% fills the section; canvas.width/height are set
-              in physical pixels so drawCover produces a crisp HiDPI result. */}
+              Starts with circle(0%) clip-path; the scroll handler expands it
+              to circle(80%) then removes it (§6i of 3d-scroll-SKILL). */}
           <canvas
             ref={canvasRef}
             className="absolute inset-0 pointer-events-none"
@@ -354,7 +371,8 @@ export default function Hero() {
               width: '100%',
               height: '100%',
               opacity: videoHidden && !isMobile ? 1 : 0,
-              transition: 'opacity 0.5s',
+              transition: 'opacity 0.4s',
+              clipPath: 'circle(0% at 50% 50%)',
             }}
           />
 
