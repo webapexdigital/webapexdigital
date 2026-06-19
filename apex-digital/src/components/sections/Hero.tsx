@@ -5,24 +5,25 @@ import { gsap, ScrollTrigger } from '../../lib/gsap';
 import { LiquidButton } from '../ui/liquid-glass-button';
 
 const NAV_LINKS = ['Services', 'Work', 'Process', 'Contact'];
-const SCROLL_MULT = 4;
+const TOTAL_FRAMES = 192;
+const FRAME_SPEED  = 2.0;   // animation completes at ~50% scroll
+const SCROLL_MULT  = 4;
 const WRAPPER_HEIGHT = `${(SCROLL_MULT + 1) * 100}dvh`;
 
-// Synchronous check — runs during render, prevents opacity flash
 const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
-// Object-cover draw: crops the bitmap to fill the canvas exactly
-function drawCover(
+// Object-cover math for HTMLImageElement → canvas
+function drawFrame(
   ctx: CanvasRenderingContext2D,
-  img: ImageBitmap,
+  img: HTMLImageElement,
   cW: number,
   cH: number,
 ) {
-  const fA = img.width / img.height;
-  const cA = cW / cH;
-  let sx = 0, sy = 0, sw = img.width, sh = img.height;
-  if (fA > cA) { sw = img.height * cA; sx = (img.width - sw) / 2; }
-  else          { sh = img.width  / cA; sy = (img.height - sh) / 2; }
+  const iW = img.naturalWidth, iH = img.naturalHeight;
+  const iAR = iW / iH, cAR = cW / cH;
+  let sx = 0, sy = 0, sw = iW, sh = iH;
+  if (iAR > cAR) { sw = iH * cAR; sx = (iW - sw) / 2; }
+  else            { sh = iW / cAR; sy = (iH - sh) / 2; }
   ctx.drawImage(img, sx, sy, sw, sh, 0, 0, cW, cH);
 }
 
@@ -34,133 +35,71 @@ export default function Hero() {
   const headlineRef = useRef<HTMLDivElement>(null);
   const ctaRef      = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
-
-  // Frame sequence state — refs so GSAP onUpdate closure can read live values
-  const framesRef = useRef<ImageBitmap[]>([]);
-  const readyRef  = useRef(false);
-  const [videoHidden, setVideoHidden] = useState(false);
+  const framesRef   = useRef<HTMLImageElement[]>([]);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [loadProgress,   setLoadProgress]   = useState(0);
+  const [loaderDone,     setLoaderDone]      = useState(isMobile); // mobile skips loader
 
-  // Mobile: autoplay loop
+  // Mobile: kick off video playback
   useEffect(() => {
-    if (window.innerWidth >= 768) return;
-    const video = videoRef.current;
-    if (!video) return;
-    video.autoplay = true;
-    video.loop = true;
-    video.play().catch(() => {});
+    if (!isMobile) return;
+    videoRef.current?.play().catch(() => {});
   }, []);
 
-  // Desktop: capture every frame via a hidden video that plays at 4×
-  // requestVideoFrameCallback (Chrome 83+ / Edge / Safari 15.4+) fires
-  // exactly once per decoded frame — no polling, no seek latency.
-  // Falls back to a 24 fps setInterval for Firefox.
+  // Desktop: preload all 192 frames as Image objects
   useEffect(() => {
     if (isMobile) return;
+
     const section = sectionRef.current;
     const canvas  = canvasRef.current;
     if (!section || !canvas) return;
 
-    let cancelled = false;
+    // Size canvas at device pixel ratio (crisp on retina)
+    const { width, height } = section.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width  = Math.round(width  * dpr);
+    canvas.height = Math.round(height * dpr);
 
-    // Hidden capture video — browser reuses the cached response for /herovid.webm
-    const cap = document.createElement('video');
-    cap.src     = '/herovid.webm';
-    cap.muted   = true;
-    cap.preload = 'auto';
+    // Block scroll while frames are loading
+    document.body.style.overflow = 'hidden';
 
-    const run = () => {
-      if (cancelled) return;
-      const duration = cap.duration;
-      if (!duration || isNaN(duration)) return;
+    const frames = new Array<HTMLImageElement>(TOTAL_FRAMES);
+    framesRef.current = frames;
+    let loaded = 0;
 
-      // Size display canvas to the sticky section at device pixel ratio
-      const { width, height } = section.getBoundingClientRect();
-      const dpr = window.devicePixelRatio || 1;
-      canvas.width  = Math.round(width  * dpr);
-      canvas.height = Math.round(height * dpr);
+    const onLoad = (i: number, img: HTMLImageElement) => {
+      frames[i] = img;
+      loaded++;
+      setLoadProgress(Math.round((loaded / TOTAL_FRAMES) * 100));
 
-      // Capture at video native resolution (drawCover handles aspect ratio)
-      const cc = document.createElement('canvas');
-      cc.width  = cap.videoWidth  || 1280;
-      cc.height = cap.videoHeight || 720;
-      const cctx = cc.getContext('2d')!;
-
-      const frames  = framesRef.current;
-      let lastTime  = -1;
-      const MIN_GAP = 1 / 24; // store up to 24 fps
-
-      const finish = () => {
-        if (cancelled) return;
-        cap.pause();
-        cap.src = '';
-        if (frames.length > 2) {
-          readyRef.current = true;
-          setVideoHidden(true);
-        }
-      };
-
-      cap.playbackRate = 4; // 10s video ≈ 2.5s capture time
-      cap.currentTime  = 0;
-      cap.play().catch(() => {});
-
-      if ('requestVideoFrameCallback' in HTMLVideoElement.prototype) {
-        const tick = (_: number, meta: { mediaTime: number }) => {
-          if (cancelled) return;
-          if (meta.mediaTime - lastTime >= MIN_GAP) {
-            lastTime = meta.mediaTime;
-            cctx.drawImage(cap, 0, 0);
-            // createImageBitmap uploads to GPU — drawImage from it is zero-copy
-            createImageBitmap(cc).then(bm => {
-              if (!cancelled) frames.push(bm);
-            });
-          }
-          if (meta.mediaTime < duration - MIN_GAP) {
-            (cap as any).requestVideoFrameCallback(tick);
-          } else {
-            finish();
-          }
-        };
-        (cap as any).requestVideoFrameCallback(tick);
-      } else {
-        // Firefox fallback: poll at ~24 fps
-        const id = setInterval(() => {
-          if (cancelled) { clearInterval(id); return; }
-          cctx.drawImage(cap, 0, 0);
-          createImageBitmap(cc).then(bm => {
-            if (!cancelled) frames.push(bm);
-          });
-          if (cap.ended || cap.currentTime >= duration - 0.05) {
-            clearInterval(id);
-            finish();
-          }
-        }, 42);
-        cap.addEventListener('ended', () => { clearInterval(id); finish(); }, { once: true });
+      if (loaded === TOTAL_FRAMES) {
+        document.body.style.overflow = '';
+        setLoaderDone(true);
+        // Immediately render frame 0 on canvas
+        const ctx = canvas.getContext('2d');
+        if (ctx && frames[0]) drawFrame(ctx, frames[0], canvas.width, canvas.height);
       }
     };
 
-    if (cap.readyState >= 1) run();
-    else cap.addEventListener('loadedmetadata', run, { once: true });
+    for (let i = 0; i < TOTAL_FRAMES; i++) {
+      const img = new Image();
+      img.onload = () => onLoad(i, img);
+      img.src = `/frames/hero/frame_${String(i + 1).padStart(4, '0')}.webp`;
+    }
 
     return () => {
-      cancelled = true;
-      cap.src = '';
-      framesRef.current.forEach(bm => bm.close());
+      document.body.style.overflow = '';
       framesRef.current = [];
-      readyRef.current  = false;
     };
   }, []);
 
-  // Desktop: ScrollTrigger scrub
+  // Desktop: bind scroll progress → frame index
   useGSAP(() => {
-    const video   = videoRef.current;
     const wrapper = wrapperRef.current;
-    if (!video || !wrapper) return;
+    if (!wrapper) return;
 
-    const skip = window.innerWidth < 768 ||
-                 window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (skip) {
+    if (isMobile || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       wrapper.style.height = '100dvh';
       if (ctaRef.current) {
         ctaRef.current.style.opacity   = '1';
@@ -169,75 +108,52 @@ export default function Hero() {
       return;
     }
 
-    const setup = () => {
-      const duration = video.duration;
-      if (!duration || isNaN(duration)) return;
+    ScrollTrigger.create({
+      trigger: wrapper,
+      start: 'top top',
+      end: 'bottom bottom',
+      scrub: true,            // zero GSAP lag — tied directly to scrollbar
+      invalidateOnRefresh: true,
+      onUpdate: (self) => {
+        const p      = self.progress;
+        const frames = framesRef.current;
+        const canvas = canvasRef.current;
+        const ctx    = canvas?.getContext('2d');
 
-      // FRAME_SPEED: video plays through by ~50% scroll, then holds last frame.
-      // Per 3d-scroll-SKILL: "product animation completes by ~55% scroll.
-      // Below 1.8 feels sluggish." Range 1.8-2.2.
-      const FRAME_SPEED = 2.0;
+        // ── Frame lookup ───────────────────────────────────────────────────
+        if (canvas && ctx && frames.length > 0) {
+          const frameIdx = Math.min(
+            Math.floor(p * (TOTAL_FRAMES - 1) * FRAME_SPEED),
+            TOTAL_FRAMES - 1,
+          );
+          const img = frames[frameIdx];
+          if (img?.complete && img.naturalWidth > 0)
+            drawFrame(ctx, img, canvas.width, canvas.height);
 
-      ScrollTrigger.create({
-        trigger: wrapper,
-        start: 'top top',
-        end: 'bottom bottom',
-        scrub: true,          // zero GSAP lag — directly tied to scrollbar position
-        invalidateOnRefresh: true,
-        onUpdate: (self) => {
-          const p = self.progress;
+          // Circle-wipe reveal between p=0.01→0.08 (§6i of 3d-scroll-SKILL)
+          const wipeP = Math.min(1, Math.max(0, (p - 0.01) / 0.07));
+          canvas.style.clipPath = wipeP >= 1 ? 'none' : `circle(${wipeP * 80}% at 50% 50%)`;
+        }
 
-          // ── Frame sequence ───────────────────────────────────────────────
-          const frames = framesRef.current;
-          if (readyRef.current && frames.length > 0) {
-            const canvas = canvasRef.current;
-            const ctx    = canvas?.getContext('2d');
-            if (canvas && ctx) {
-              // Accelerated mapping: video done at p = 1/FRAME_SPEED (50%)
-              const accelerated = Math.min(p * FRAME_SPEED, 1);
-              const i = Math.min(
-                Math.floor(accelerated * frames.length),
-                frames.length - 1,
-              );
-              if (frames[i]) drawCover(ctx, frames[i], canvas.width, canvas.height);
+        // ── Scroll progress bar ───────────────────────────────────────────
+        if (progressRef.current)
+          progressRef.current.style.transform = `scaleX(${p})`;
 
-              // Circle-wipe reveal — per 3d-scroll-SKILL §6i
-              // canvas expands from circle(0%) to circle(80%) between p=0.01→0.08
-              const wipeP = Math.min(1, Math.max(0, (p - 0.01) / 0.07));
-              canvas.style.clipPath = wipeP >= 1
-                ? 'none'
-                : `circle(${wipeP * 80}% at 50% 50%)`;
-            }
-          } else {
-            // Fallback video seek while frames are still being extracted
-            const t = Math.min(p * FRAME_SPEED, 1) * duration;
-            if (Math.abs(video.currentTime - t) > 0.033) video.currentTime = t;
-          }
+        // ── Headline: exits fast (gone by p=0.08) ─────────────────────────
+        if (headlineRef.current) {
+          const hp = Math.min(p / 0.08, 1);
+          headlineRef.current.style.opacity   = String(1 - hp);
+          headlineRef.current.style.transform = `translateY(${hp * -36}px)`;
+        }
 
-          // ── Progress bar ─────────────────────────────────────────────────
-          if (progressRef.current)
-            progressRef.current.style.transform = `scaleX(${p})`;
-
-          // ── Headline: fades out fast (gone by p=0.08) ────────────────────
-          // Per skill: hero content should exit quickly so video takes focus
-          if (headlineRef.current) {
-            const hp = Math.min(p / 0.08, 1);
-            headlineRef.current.style.opacity  = String(1 - hp);
-            headlineRef.current.style.transform = `translateY(${hp * -36}px)`;
-          }
-
-          // ── CTAs: fade in from 55% → 75% (after video completes) ─────────
-          if (ctaRef.current) {
-            const cp = Math.max(0, (p - 0.55) / 0.20);
-            ctaRef.current.style.opacity  = String(cp);
-            ctaRef.current.style.transform = `translateY(${(1 - cp) * 18}px)`;
-          }
-        },
-      });
-    };
-
-    if (video.readyState >= 1) setup();
-    else video.addEventListener('loadedmetadata', setup, { once: true });
+        // ── CTAs: appear at p=0.55→0.75 (after animation completes) ───────
+        if (ctaRef.current) {
+          const cp = Math.max(0, (p - 0.55) / 0.20);
+          ctaRef.current.style.opacity   = String(cp);
+          ctaRef.current.style.transform = `translateY(${(1 - cp) * 18}px)`;
+        }
+      },
+    });
 
     return () => { ScrollTrigger.getAll().forEach(t => t.kill()); };
   }, []);
@@ -332,6 +248,38 @@ export default function Hero() {
         </button>
       </div>
 
+      {/* ── Frame loader (desktop only) ───────────────────────────────────────── */}
+      {!isMobile && (
+        <div
+          className="fixed inset-0 z-[500] flex flex-col items-center justify-center bg-black"
+          style={{
+            opacity: loaderDone ? 0 : 1,
+            pointerEvents: loaderDone ? 'none' : 'auto',
+            transition: 'opacity 0.7s ease',
+          }}
+        >
+          <img
+            src="/apex-logo.png"
+            alt="Apex Digital"
+            className="h-12 w-auto mb-10 opacity-80 select-none"
+          />
+          {/* Progress bar */}
+          <div className="w-52 h-[2px] bg-white/10 rounded-full overflow-hidden">
+            <div
+              className="h-full origin-left rounded-full"
+              style={{
+                background: 'linear-gradient(90deg, #0099FF, #7B3CE8)',
+                transform: `scaleX(${loadProgress / 100})`,
+                transition: 'transform 0.12s linear',
+              }}
+            />
+          </div>
+          <p className="mt-4 text-[11px] font-medium text-white/30 uppercase tracking-[0.22em]">
+            {loadProgress}%
+          </p>
+        </div>
+      )}
+
       {/* ── Scroll wrapper ────────────────────────────────────────────────────── */}
       <div
         ref={wrapperRef}
@@ -343,38 +291,34 @@ export default function Hero() {
           className="sticky top-0 w-full overflow-hidden bg-black"
           style={{ height: '100dvh' }}
         >
-          {/* Video — fallback while frames capture, permanent on mobile */}
-          <video
-            ref={videoRef}
-            muted
-            playsInline
-            preload="auto"
-            autoPlay={isMobile}
-            loop={isMobile}
-            className="absolute inset-0 w-full h-full object-cover"
-            style={{
-              opacity: videoHidden && !isMobile ? 0 : 1,
-              transition: 'opacity 0.5s',
-            }}
-          >
-            {!isMobile && <source src="/herovid.webm" type="video/webm" />}
-            <source src={isMobile ? '/herovid-mob.mp4' : '/herovid.mp4'} type="video/mp4" />
-          </video>
+          {/* Mobile: autoplay video loop */}
+          {isMobile && (
+            <video
+              ref={videoRef}
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="absolute inset-0 w-full h-full object-cover"
+            >
+              <source src="/herovid.webm" type="video/webm" />
+              <source src="/herovid-mob.mp4" type="video/mp4" />
+            </video>
+          )}
 
-          {/* Frame canvas — replaces video on desktop once extraction completes.
-              Starts with circle(0%) clip-path; the scroll handler expands it
-              to circle(80%) then removes it (§6i of 3d-scroll-SKILL). */}
-          <canvas
-            ref={canvasRef}
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              width: '100%',
-              height: '100%',
-              opacity: videoHidden && !isMobile ? 1 : 0,
-              transition: 'opacity 0.4s',
-              clipPath: 'circle(0% at 50% 50%)',
-            }}
-          />
+          {/* Desktop: frame canvas. Starts clip-path circle(0%) —
+              circle-wipe expands to 80% as scroll begins, then removed. */}
+          {!isMobile && (
+            <canvas
+              ref={canvasRef}
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                width: '100%',
+                height: '100%',
+                clipPath: 'circle(0% at 50% 50%)',
+              }}
+            />
+          )}
 
           {/* Scrims */}
           <div
@@ -434,7 +378,7 @@ export default function Hero() {
             </LiquidButton>
           </div>
 
-          {/* Progress bar — desktop only */}
+          {/* Scroll progress bar (desktop) */}
           <div className="absolute bottom-0 left-0 right-0 h-px bg-white/12 hidden sm:block">
             <div
               ref={progressRef}
