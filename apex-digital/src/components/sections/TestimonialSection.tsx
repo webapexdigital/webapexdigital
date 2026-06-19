@@ -108,7 +108,7 @@ export default function AutomationSection() {
           {/* ── Right: floating image ────────────────────────────── */}
           <div ref={logoCardRef} className="flex items-center justify-center">
             <img
-              src="/apexpic.png"
+              src="/transp-logo-apex.png"
               alt="Apex Digital"
               className="w-full max-w-[560px] select-none animate-float"
               style={{ willChange: 'transform' }}
