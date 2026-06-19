@@ -6,11 +6,21 @@ import { LiquidButton } from '../ui/liquid-glass-button';
 
 const NAV_LINKS = ['Services', 'Work', 'Process', 'Contact'];
 const TOTAL_FRAMES = 192;
-const FRAME_SPEED  = 2.0;   // animation completes at ~50% scroll
+const FRAME_SPEED  = 1.0;   // animation completes at 100% scroll
 const SCROLL_MULT  = 4;
 const WRAPPER_HEIGHT = `${(SCROLL_MULT + 1) * 100}dvh`;
 
 const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
+// Returns 0→1→0 opacity for a scroll window with 28% fade-in/out each side
+function overlayAlpha(p: number, enter: number, leave: number): number {
+  const fade = (leave - enter) * 0.28;
+  if (p <= enter) return 0;
+  if (p < enter + fade) return (p - enter) / fade;
+  if (p < leave - fade) return 1;
+  if (p < leave) return (leave - p) / fade;
+  return 0;
+}
 
 // Object-cover math for HTMLImageElement → canvas
 function drawFrame(
@@ -36,6 +46,9 @@ export default function Hero() {
   const ctaRef      = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
   const framesRef   = useRef<HTMLImageElement[]>([]);
+  const overlay1Ref = useRef<HTMLDivElement>(null);
+  const overlay2Ref = useRef<HTMLDivElement>(null);
+  const overlay3Ref = useRef<HTMLDivElement>(null);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [loadProgress,   setLoadProgress]   = useState(0);
@@ -129,26 +142,42 @@ export default function Hero() {
           const img = frames[frameIdx];
           if (img?.complete && img.naturalWidth > 0)
             drawFrame(ctx, img, canvas.width, canvas.height);
-
-          // Circle-wipe reveal between p=0.01→0.08 (§6i of 3d-scroll-SKILL)
-          const wipeP = Math.min(1, Math.max(0, (p - 0.01) / 0.07));
-          canvas.style.clipPath = wipeP >= 1 ? 'none' : `circle(${wipeP * 80}% at 50% 50%)`;
         }
 
         // ── Scroll progress bar ───────────────────────────────────────────
         if (progressRef.current)
           progressRef.current.style.transform = `scaleX(${p})`;
 
-        // ── Headline: exits fast (gone by p=0.08) ─────────────────────────
+        // ── Headline: fades out by p=0.20 ────────────────────────────────
         if (headlineRef.current) {
-          const hp = Math.min(p / 0.08, 1);
+          const hp = Math.min(p / 0.20, 1);
           headlineRef.current.style.opacity   = String(1 - hp);
           headlineRef.current.style.transform = `translateY(${hp * -36}px)`;
         }
 
-        // ── CTAs: appear at p=0.55→0.75 (after animation completes) ───────
+        // ── Cinematic overlays ────────────────────────────────────────────
+        // Overlay 1: AI Video Ads  p=0.22→0.42  slides from left
+        const a1 = overlayAlpha(p, 0.22, 0.42);
+        if (overlay1Ref.current) {
+          overlay1Ref.current.style.opacity   = String(a1);
+          overlay1Ref.current.style.transform = `translateX(${(1 - a1) * -28}px)`;
+        }
+        // Overlay 2: AI Automation  p=0.46→0.63  slides from right
+        const a2 = overlayAlpha(p, 0.46, 0.63);
+        if (overlay2Ref.current) {
+          overlay2Ref.current.style.opacity   = String(a2);
+          overlay2Ref.current.style.transform = `translateX(${(1 - a2) * 28}px)`;
+        }
+        // Overlay 3: 3D Websites  p=0.66→0.80  slides up
+        const a3 = overlayAlpha(p, 0.66, 0.80);
+        if (overlay3Ref.current) {
+          overlay3Ref.current.style.opacity   = String(a3);
+          overlay3Ref.current.style.transform = `translateY(${(1 - a3) * 20}px)`;
+        }
+
+        // ── CTAs: appear at p=0.78→0.94 (near end of animation) ──────────
         if (ctaRef.current) {
-          const cp = Math.max(0, (p - 0.55) / 0.20);
+          const cp = Math.max(0, (p - 0.78) / 0.16);
           ctaRef.current.style.opacity   = String(cp);
           ctaRef.current.style.transform = `translateY(${(1 - cp) * 18}px)`;
         }
@@ -306,17 +335,12 @@ export default function Hero() {
             </video>
           )}
 
-          {/* Desktop: frame canvas. Starts clip-path circle(0%) —
-              circle-wipe expands to 80% as scroll begins, then removed. */}
+          {/* Desktop: frame canvas */}
           {!isMobile && (
             <canvas
               ref={canvasRef}
               className="absolute inset-0 pointer-events-none"
-              style={{
-                width: '100%',
-                height: '100%',
-                clipPath: 'circle(0% at 50% 50%)',
-              }}
+              style={{ width: '100%', height: '100%' }}
             />
           )}
 
@@ -376,6 +400,53 @@ export default function Hero() {
             >
               Get in touch
             </LiquidButton>
+          </div>
+
+          {/* ── Cinematic overlays (desktop) ─────────────────────────────── */}
+
+          {/* Overlay 1 — AI Video Ads */}
+          <div
+            ref={overlay1Ref}
+            className="absolute bottom-20 left-8 sm:left-14 hidden sm:block pointer-events-none select-none"
+            style={{ opacity: 0, willChange: 'opacity, transform' }}
+          >
+            <p className="text-[10px] font-semibold text-white/40 uppercase tracking-[0.22em] mb-2">
+              AI Video Ads
+            </p>
+            <h3 className="text-3xl md:text-4xl font-heading font-bold text-white leading-[1.1]">
+              Ads that stop<br />the scroll.
+            </h3>
+            <div className="mt-3 h-px w-12" style={{ background: 'linear-gradient(90deg,#0099FF,#7B3CE8)' }} />
+          </div>
+
+          {/* Overlay 2 — AI Automation */}
+          <div
+            ref={overlay2Ref}
+            className="absolute bottom-20 right-8 sm:right-14 text-right hidden sm:block pointer-events-none select-none"
+            style={{ opacity: 0, willChange: 'opacity, transform' }}
+          >
+            <p className="text-[10px] font-semibold text-white/40 uppercase tracking-[0.22em] mb-2">
+              AI Automation
+            </p>
+            <h3 className="text-3xl md:text-4xl font-heading font-bold text-white leading-[1.1]">
+              Scale your business<br />while you sleep.
+            </h3>
+            <div className="mt-3 h-px w-12 ml-auto" style={{ background: 'linear-gradient(90deg,#7B3CE8,#0099FF)' }} />
+          </div>
+
+          {/* Overlay 3 — 3D Websites */}
+          <div
+            ref={overlay3Ref}
+            className="absolute bottom-20 left-0 right-0 flex flex-col items-center hidden sm:flex pointer-events-none select-none"
+            style={{ opacity: 0, willChange: 'opacity, transform' }}
+          >
+            <p className="text-[10px] font-semibold text-white/40 uppercase tracking-[0.22em] mb-2">
+              3D Websites
+            </p>
+            <h3 className="text-3xl md:text-4xl font-heading font-bold text-white text-center leading-[1.1]">
+              Immersive experiences<br />that convert.
+            </h3>
+            <div className="mt-3 h-px w-12" style={{ background: 'linear-gradient(90deg,#0099FF,#7B3CE8)' }} />
           </div>
 
           {/* Scroll progress bar (desktop) */}
