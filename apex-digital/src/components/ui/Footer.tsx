@@ -1,5 +1,5 @@
-import { GrainGradient, grainGradientPresets } from '@paper-design/shaders-react';
 import { ArrowUpRight } from 'lucide-react';
+import { Boxes } from './background-boxes';
 
 export default function Footer() {
   const scrollTo = (id: string) =>
@@ -7,22 +7,16 @@ export default function Footer() {
 
   return (
     <>
-      {/* ── Grain gradient CTA ──────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden" style={{ minHeight: '70vh' }}>
-        {/* Shader background */}
-        <GrainGradient
-          {...grainGradientPresets[0]}
-          style={{ position: 'absolute', inset: 0, zIndex: 0 }}
-        />
+      {/* ── Background Boxes CTA ─────────────────────────────────────────────── */}
+      <section className="relative overflow-hidden bg-slate-900" style={{ minHeight: '70vh' }}>
+        {/* Animated grid background */}
+        <Boxes />
 
-        {/* Overlay for contrast */}
-        <div
-          className="absolute inset-0 z-[1]"
-          style={{ background: 'rgba(0,0,0,0.18)' }}
-        />
+        {/* Radial mask — fades boxes toward edges so content pops */}
+        <div className="absolute inset-0 z-[1] [mask-image:radial-gradient(ellipse_at_center,transparent_30%,black)] bg-slate-900 pointer-events-none" />
 
         {/* Content */}
-        <div className="relative z-[2] flex flex-col items-center justify-center text-center px-6 py-28 md:py-40 max-w-4xl mx-auto h-full">
+        <div className="relative z-[2] flex flex-col items-center justify-center text-center px-6 py-28 md:py-40 max-w-4xl mx-auto">
           <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-white/55 mb-6">
             LET'S BUILD TOGETHER
           </p>

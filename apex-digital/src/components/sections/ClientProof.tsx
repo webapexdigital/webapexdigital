@@ -85,18 +85,6 @@ export default function ClientProof() {
               </div>
             </div>
 
-            {/* Floating verified badge */}
-            <div
-              ref={badgeRef}
-              className="absolute -top-4 -right-4 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold text-white shadow-lg"
-              style={{
-                background: 'linear-gradient(135deg, #0099FF, #7B3CE8)',
-                boxShadow: '0 4px 20px rgba(123,60,232,0.45)',
-              }}
-            >
-              <CheckCircle2 className="w-3.5 h-3.5" />
-              Real DM · Verified
-            </div>
           </div>
 
           {/* ── Quote + client info ───────────────────────────────── */}
