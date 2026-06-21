@@ -1,4 +1,4 @@
-import Button from './Button';
+﻿import Button from './Button';
 
 export default function BottomNav() {
   return (
@@ -13,7 +13,7 @@ export default function BottomNav() {
         <span className="font-mondwest text-2xl font-semibold text-[#0D0D2B] leading-none select-none">
           A
         </span>
-        <Button href="mailto:hello@apexdigital.in" variant="primary">
+        <Button href="mailto:webapexdigital@gmail.com" variant="primary">
           Start a chat
         </Button>
       </div>

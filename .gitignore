@@ -14,3 +14,6 @@ desktop.ini
 .env
 .env.*
 !.env.example
+
+# Large video files — use WebM instead
+apex-digital/public/videos-created/*.mp4

@@ -1,10 +1,10 @@
-import type { ReactNode } from 'react';
+﻿import type { ReactNode } from 'react';
 import { Check } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 export interface PricePoint {
   label: string;   // e.g. "30 sec", "60 sec", "Starting at"
-  amount: string;  // e.g. "₹2,000", "₹3,500", "Custom"
+  amount: string;  // e.g. "â‚¹2,000", "â‚¹3,500", "Custom"
 }
 
 export interface PricingTier {
@@ -39,7 +39,7 @@ export function CreativePricing({
 }) {
   return (
     <div className="w-full max-w-6xl mx-auto">
-      {/* ── Header ─────────────────────────────────────────────── */}
+      {/* â”€â”€ Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <div className="text-center mb-16 space-y-4">
         <p className="text-[11px] font-medium text-[var(--muted)] uppercase tracking-[0.2em]">
           {tag}
@@ -50,7 +50,7 @@ export function CreativePricing({
         <p className="text-base text-[var(--body)] max-w-sm mx-auto">{description}</p>
       </div>
 
-      {/* ── Cards ──────────────────────────────────────────────── */}
+      {/* â”€â”€ Cards â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-6 lg:gap-10">
         {tiers.map((tier, index) => (
           <div
@@ -95,7 +95,7 @@ export function CreativePricing({
                 <p className="text-sm text-[var(--body)] mt-1">{tier.description}</p>
               </div>
 
-              {/* ── Price block ── */}
+              {/* â”€â”€ Price block â”€â”€ */}
               <div className="mb-5">
                 {tier.pricePoints.length === 1 ? (
                   /* Single price: big display */
@@ -144,7 +144,7 @@ export function CreativePricing({
 
               {/* CTA */}
               <a
-                href={tier.ctaHref ?? 'mailto:hello@apexdigital.in'}
+                href={tier.ctaHref ?? 'mailto:webapexdigital@gmail.com'}
                 className={cn(
                   'flex w-full items-center justify-center py-2.5 px-4 rounded-xl',
                   'text-sm font-medium font-heading border-2 border-[#0D0D2B]',

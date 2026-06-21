@@ -1,4 +1,4 @@
-import { Film, Cpu, Globe } from 'lucide-react';
+﻿import { Film, Cpu, Globe } from 'lucide-react';
 import { CreativePricing } from '../ui/creative-pricing';
 import type { PricingTier } from '../ui/creative-pricing';
 
@@ -19,7 +19,7 @@ const TIERS: PricingTier[] = [
       'Social-ready exports (9:16, 16:9, 1:1)',
     ],
     ctaLabel: 'Order a video',
-    ctaHref: 'mailto:hello@apexdigital.in',
+    ctaHref: 'mailto:webapexdigital@gmail.com',
   },
   {
     name: 'AI Automation',
@@ -34,11 +34,11 @@ const TIERS: PricingTier[] = [
     features: [
       'Discovery call included',
       'End-to-end workflow build',
-      'Integrations (CRM, WhatsApp, Sheets…)',
+      'Integrations (CRM, WhatsApp, Sheetsâ€¦)',
       'Handoff + documentation',
     ],
     ctaLabel: 'Discuss your project',
-    ctaHref: 'mailto:hello@apexdigital.in',
+    ctaHref: 'mailto:webapexdigital@gmail.com',
   },
   {
     name: '3D Websites',
@@ -56,7 +56,7 @@ const TIERS: PricingTier[] = [
       'Full source handoff',
     ],
     ctaLabel: 'Get a quote',
-    ctaHref: 'mailto:hello@apexdigital.in',
+    ctaHref: 'mailto:webapexdigital@gmail.com',
   },
 ];
 

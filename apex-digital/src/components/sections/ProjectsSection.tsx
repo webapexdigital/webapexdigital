@@ -5,29 +5,24 @@ import { SpeedLinesBackground } from '../ui/speed-lines-shader';
 import { ArrowUpRight } from 'lucide-react';
 import GlowRevealCard from '../ui/GlowRevealCard';
 import InteractivePortrait from '../ui/InteractivePortrait';
+import { DynamicFrameLayout } from '../ui/dynamic-frame-layout';
 
-const SECONDARY_PROJECTS = [
-  {
-    tag: 'Automation',
-    name: 'AutoFlow',
-    description: 'End-to-end business automation cutting operational overhead by 60%',
-    result: '60% cost reduction',
-    img: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80',
-  },
-  {
-    tag: '3D Website',
-    name: 'Cosmos 3D',
-    description: 'Immersive 3D scroll experience that tripled time-on-site for a Web3 protocol',
-    result: '3× engagement',
-    img: 'https://images.unsplash.com/photo-1614851099175-e5b30eb6f696?w=800&q=80',
-  },
+const DEMO_FRAMES = [
+  { id:1, video:"/videos-created/GOOD DAY COFFEE REVISED.webm",              defaultPos:{x:0,y:0,w:4,h:4}, mediaSize:1, isHovered:false },
+  { id:2, video:"/videos-created/FIESTA REEL-1.webm",                        defaultPos:{x:4,y:0,w:4,h:4}, mediaSize:1, isHovered:false, portrait:true },
+  { id:3, video:"/videos-created/Revised hd.webm",                           defaultPos:{x:8,y:0,w:4,h:4}, mediaSize:1, isHovered:false, portrait:true },
+  { id:4, video:"/videos-created/mango-splash-web.webm",                    defaultPos:{x:0,y:4,w:4,h:4}, mediaSize:1, isHovered:false },
+  { id:5, video:"/videos-created/web-video.webm",                           defaultPos:{x:4,y:4,w:4,h:4}, mediaSize:1, isHovered:false },
+  { id:6, video:"/videos-created/belor ad vid.webm",                         defaultPos:{x:8,y:4,w:4,h:4}, mediaSize:1, isHovered:false, portrait:true },
+  { id:7, video:"/videos-created/cookie cute vid.webm",                      defaultPos:{x:0,y:8,w:4,h:4}, mediaSize:1, isHovered:false },
+  { id:8, video:"/videos-created/Revised and Final Version Video - With Logo.webm", defaultPos:{x:4,y:8,w:4,h:4}, mediaSize:1, isHovered:false },
+  { id:9, video:"/videos-created/redmax ad.webm",                            defaultPos:{x:8,y:8,w:4,h:4}, mediaSize:1, isHovered:false, portrait:true },
 ];
 
 export default function ProjectsSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const headRef    = useRef<HTMLDivElement>(null);
   const featRef    = useRef<HTMLDivElement>(null);
-  const cardsRef   = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
     gsap.from(headRef.current, {
@@ -38,12 +33,6 @@ export default function ProjectsSection() {
       y: 60, opacity: 0, duration: 1, ease: 'power3.out',
       scrollTrigger: { trigger: featRef.current, start: 'top 82%' },
     });
-    if (cardsRef.current) {
-      gsap.from(Array.from(cardsRef.current.children), {
-        y: 50, opacity: 0, duration: 0.75, ease: 'power2.out', stagger: 0.15,
-        scrollTrigger: { trigger: cardsRef.current, start: 'top 82%' },
-      });
-    }
   }, []);
 
   return (
@@ -150,62 +139,14 @@ export default function ProjectsSection() {
           </InteractivePortrait>
         </div>
 
-        {/* ── Secondary cards ───────────────────────────────────── */}
-        <div ref={cardsRef} className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {SECONDARY_PROJECTS.map((p) => (
-            <div
-              key={p.name}
-              className="group relative rounded-2xl overflow-hidden cursor-pointer"
-              style={{
-                background: 'rgba(255,255,255,0.06)',
-                border: '1px solid rgba(255,255,255,0.12)',
-                backdropFilter: 'blur(12px)',
-                WebkitBackdropFilter: 'blur(12px)',
-              }}
-            >
-              <div className="relative overflow-hidden h-52 md:h-60">
-                <img
-                  src={p.img}
-                  alt={p.name}
-                  loading="lazy"
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-              </div>
-              <div className="p-5 md:p-6">
-                <span className="inline-block text-[10px] font-semibold uppercase tracking-[0.18em] text-[#0099FF] mb-3">
-                  {p.tag}
-                </span>
-                <h3 className="font-mondwest text-xl md:text-2xl text-white mb-2 leading-snug">
-                  {p.name}
-                </h3>
-                <p className="text-sm text-white/55 leading-relaxed mb-5">
-                  {p.description}
-                </p>
-                <div className="flex items-center justify-between">
-                  <span
-                    className="text-xs font-semibold px-3 py-1.5 rounded-full"
-                    style={{
-                      background: 'rgba(0,153,255,0.15)',
-                      border: '1px solid rgba(0,153,255,0.30)',
-                      color: '#5bc8ff',
-                    }}
-                  >
-                    {p.result}
-                  </span>
-                  <span
-                    className="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 group-hover:scale-110"
-                    style={{
-                      background: 'rgba(255,255,255,0.10)',
-                      border: '1px solid rgba(255,255,255,0.18)',
-                    }}
-                  >
-                    <ArrowUpRight className="w-4 h-4 text-white" strokeWidth={1.8} />
-                  </span>
-                </div>
-              </div>
-            </div>
-          ))}
+        {/* ── Dynamic video grid ───────────────────────────────── */}
+        <div className="mt-5 rounded-2xl overflow-hidden" style={{ height: 560 }}>
+          <DynamicFrameLayout
+            frames={DEMO_FRAMES}
+            className="w-full h-full"
+            hoverSize={6}
+            gapSize={4}
+          />
         </div>
 
       </div>

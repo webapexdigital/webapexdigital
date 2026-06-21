@@ -1,4 +1,4 @@
-import { useRef, useCallback, useEffect } from 'react';
+﻿import { useRef, useCallback, useEffect } from 'react';
 import Button from '../ui/Button';
 
 const TRAIL_IMAGES = [
@@ -83,7 +83,7 @@ export default function PartnerSection() {
             Partner with us
           </h2>
           <div className="relative z-20 pointer-events-auto">
-            <Button href="mailto:hello@apexdigital.in" variant="primary">
+            <Button href="mailto:webapexdigital@gmail.com" variant="primary">
               <img
                 src="https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=1"
                 alt=""

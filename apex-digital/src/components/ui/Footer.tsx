@@ -1,4 +1,4 @@
-import { ArrowUpRight } from 'lucide-react';
+﻿import { ArrowUpRight } from 'lucide-react';
 import { Boxes } from './background-boxes';
 
 export default function Footer() {
@@ -7,12 +7,12 @@ export default function Footer() {
 
   return (
     <>
-      {/* ── Background Boxes CTA ─────────────────────────────────────────────── */}
+      {/* â”€â”€ Background Boxes CTA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className="relative overflow-hidden bg-slate-900" style={{ minHeight: '70vh' }}>
         {/* Animated grid background */}
         <Boxes />
 
-        {/* Radial mask — fades boxes toward edges so content pops */}
+        {/* Radial mask â€” fades boxes toward edges so content pops */}
         <div className="absolute inset-0 z-[1] [mask-image:radial-gradient(ellipse_at_center,transparent_30%,black)] bg-slate-900 pointer-events-none" />
 
         {/* Content */}
@@ -28,12 +28,12 @@ export default function Footer() {
           </h2>
 
           <p className="text-base sm:text-lg text-white/65 max-w-lg leading-relaxed mb-10">
-            AI video ads, intelligent automation, and 3D web experiences — all under one roof. Let's talk about what we can build for you.
+            AI video ads, intelligent automation, and 3D web experiences â€” all under one roof. Let's talk about what we can build for you.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4">
             <a
-              href="mailto:hello@apexdigital.in"
+              href="mailto:webapexdigital@gmail.com"
               className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-white text-[#0D0D2B] text-[15px] font-semibold hover:bg-white/90 active:scale-[0.97] transition-all duration-200 select-none"
             >
               Start a conversation
@@ -52,10 +52,10 @@ export default function Footer() {
         </div>
       </section>
 
-      {/* ── Slim copyright bar ─────────────────────────────────────────────── */}
+      {/* â”€â”€ Slim copyright bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <div className="bg-[#0D0D2B] px-6 py-5">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
-          <span className="text-[13px] text-white/40">Apex Digital © 2026</span>
+          <span className="text-[13px] text-white/40">Apex Digital Â© 2026</span>
 
           <nav className="flex items-center gap-6">
             {['#pricing', '#work', '#contact'].map((href, i) => (
