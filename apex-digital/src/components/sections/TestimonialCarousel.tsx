@@ -53,7 +53,7 @@ export default function TestimonialCarousel() {
       {/* Header */}
       <div className="max-w-7xl mx-auto px-6 mb-10 flex items-end justify-between">
         <h2 className="text-[32px] md:text-[40px] lg:text-[44px] leading-[1.1] text-[#0D0D2B] tracking-tight">
-          What <span className="font-mondwest">builders</span> say
+          What our <span className="font-mondwest">clients</span> say
         </h2>
         <div className="flex items-center gap-1 shrink-0 ml-4">
           {[...Array(5)].map((_, i) => (

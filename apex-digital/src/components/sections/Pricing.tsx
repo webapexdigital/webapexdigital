@@ -8,7 +8,7 @@ const TIERS: PricingTier[] = [
     icon: <Film className="w-5 h-5" />,
     iconColor: '#0099FF',
     pricePoints: [
-      { label: 'Pricing', amount: 'Custom' },
+      { label: 'Starting from', amount: '₹2,000' },
     ],
     priceNote: 'scoped to your brief & format',
     description: 'Scroll-stopping ads crafted by AI.',
