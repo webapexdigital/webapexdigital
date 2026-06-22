@@ -10,6 +10,7 @@ import PartnerSection    from './components/sections/PartnerSection';
 import Footer            from './components/ui/Footer';
 import CopyrightBar      from './components/ui/CopyrightBar';
 import BottomNav         from './components/ui/BottomNav';
+import WhatsAppFAB       from './components/ui/WhatsAppFAB';
 
 export default function App() {
   return (
@@ -26,6 +27,8 @@ export default function App() {
       <CopyrightBar />
       {/* Fixed floating pill — always visible */}
       <BottomNav />
+      {/* WhatsApp floating action button */}
+      <WhatsAppFAB />
     </LenisProvider>
   );
 }
