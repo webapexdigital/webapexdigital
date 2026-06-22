@@ -13,7 +13,7 @@ export default function BottomNav() {
         <span className="font-mondwest text-2xl font-semibold text-[#0D0D2B] leading-none select-none">
           A
         </span>
-        <Button href="mailto:webapexdigital@gmail.com" variant="primary">
+        <Button href="https://wa.me/971522278380" variant="primary">
           Start a chat
         </Button>
       </div>

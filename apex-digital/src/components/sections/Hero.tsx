@@ -4,7 +4,12 @@ import { useGSAP } from '@gsap/react';
 import { gsap, ScrollTrigger } from '../../lib/gsap';
 import { LiquidButton } from '../ui/liquid-glass-button';
 
-const NAV_LINKS = ['Services', 'Work', 'Process', 'Contact'];
+const NAV_LINKS = [
+  { label: 'Services', href: '#services' },
+  { label: 'Work',     href: '#work' },
+  { label: 'Pricing',  href: '#pricing' },
+  { label: 'Contact',  href: '#contact' },
+];
 const TOTAL_FRAMES = 192;
 const FRAME_SPEED  = 1.0;   // animation completes at 100% scroll
 const SCROLL_MULT  = 4;
@@ -215,10 +220,10 @@ export default function Hero() {
           />
 
           <nav className="hidden md:flex flex-1 justify-center items-center gap-6 lg:gap-8">
-            {NAV_LINKS.map(label => (
+            {NAV_LINKS.map(({ label, href }) => (
               <button
                 key={label}
-                onClick={() => scrollTo(`#${label.toLowerCase()}`)}
+                onClick={() => scrollTo(href)}
                 className="text-[15px] font-medium text-[#1a1a3e]/70 hover:text-[#1a1a3e] transition-colors duration-200 cursor-pointer whitespace-nowrap"
               >
                 {label}
@@ -260,10 +265,10 @@ export default function Hero() {
           mobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
       >
-        {NAV_LINKS.map(label => (
+        {NAV_LINKS.map(({ label, href }) => (
           <button
             key={label}
-            onClick={() => scrollTo(`#${label.toLowerCase()}`)}
+            onClick={() => scrollTo(href)}
             className="text-3xl font-medium text-[#0D0D2B] cursor-pointer hover:opacity-60 transition-opacity min-h-[44px] flex items-center"
           >
             {label}

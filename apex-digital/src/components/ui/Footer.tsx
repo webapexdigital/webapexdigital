@@ -33,7 +33,7 @@ export default function Footer() {
 
           <div className="flex flex-col sm:flex-row gap-4">
             <a
-              href="mailto:webapexdigital@gmail.com"
+              href="https://wa.me/971522278380"
               className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-white text-[#0D0D2B] text-[15px] font-semibold hover:bg-white/90 active:scale-[0.97] transition-all duration-200 select-none"
             >
               Start a conversation
