@@ -4,18 +4,6 @@
 
 /* ─── Custom Fonts ───────────────────────────────────────────────────────── */
 @font-face {
-  font-family: 'PP Neue Montreal';
-  src: url('https://assets.website-files.com/6009ec8cda7f305645c9d91b/60176f9bb43e36419997ecfe_PPNeueMontreal-Book.otf') format('opentype');
-  font-weight: 400;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'PP Neue Montreal';
-  src: url('https://assets.website-files.com/6009ec8cda7f305645c9d91b/60176f9b39c5673e51a86f5a_PPNeueMontreal-Medium.otf') format('opentype');
-  font-weight: 500;
-  font-display: swap;
-}
-@font-face {
   font-family: 'PP Mondwest';
   src: url('/PPMondwest-Regular.woff2') format('woff2');
   font-weight: 400;
@@ -76,7 +64,7 @@ html {
 html { scrollbar-width: none; -ms-overflow-style: none; }
 
 body {
-  font-family: 'PP Neue Montreal', 'Inter', sans-serif;
+  font-family: 'Inter', sans-serif;
   background-color: var(--bg);
   color: var(--body);
   overflow-x: hidden;

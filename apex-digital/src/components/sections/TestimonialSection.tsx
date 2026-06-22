@@ -36,13 +36,12 @@ const PROJECTS = [
   },
 ];
 
-// ── Add your screenshot paths here when ready ──────────────────────────
-// e.g. src: '/screenshots/newsletter-automation.png'
+// ── Drop screenshots into public/screenshots/ and update src paths ──────
 const SCREENSHOTS = [
-  { src: '', label: 'Newsletter Automation' },
-  { src: '', label: 'Cold Email Outreach' },
-  { src: '', label: 'Lead Gen Pipeline' },
-  { src: '', label: 'Painpoint Generator' },
+  { src: '/screenshots/cold-email-campaign.png',  label: 'Campaign Overview' },
+  { src: '/screenshots/cold-email-contacts.png',  label: 'Contacts & Status' },
+  { src: '/screenshots/cold-email-template.png',  label: 'Email Template Editor' },
+  { src: '/screenshots/cold-email-settings.png',  label: 'Send Schedule & Settings' },
 ];
 
 function ScreenshotCard({ src, label, index }: { src: string; label: string; index: number }) {
@@ -95,19 +94,21 @@ export default function AutomationSection() {
   useGSAP(() => {
     void ScrollTrigger;
 
-    gsap.from(headRef.current, {
-      y: 40, opacity: 0, duration: 0.9, ease: 'power3.out',
-      scrollTrigger: { trigger: sectionRef.current, start: 'top 78%' },
-    });
+    if (headRef.current) {
+      gsap.from(headRef.current, {
+        y: 40, opacity: 0, duration: 0.9, ease: 'power3.out',
+        scrollTrigger: { trigger: sectionRef.current, start: 'top 78%' },
+      });
+    }
 
-    if (screenshotsRef.current) {
+    if (screenshotsRef.current?.children.length) {
       gsap.from(Array.from(screenshotsRef.current.children), {
         y: 30, opacity: 0, duration: 0.7, ease: 'power2.out', stagger: 0.12,
         scrollTrigger: { trigger: screenshotsRef.current, start: 'top 80%' },
       });
     }
 
-    if (listRef.current) {
+    if (listRef.current?.children.length) {
       gsap.from(Array.from(listRef.current.children), {
         y: 20, opacity: 0, duration: 0.55, ease: 'power2.out', stagger: 0.07,
         scrollTrigger: { trigger: listRef.current, start: 'top 82%' },
