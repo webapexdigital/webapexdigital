@@ -161,6 +161,59 @@ export default function GlowRevealCard({
         />
       )}
 
+      {/* Idle hint — visible until first cursor move, then fades out */}
+      <div
+        className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 pointer-events-none transition-opacity duration-700"
+        style={{ opacity: cursorPos ? 0 : 1 }}
+      >
+        {/* Pulsing ring stack */}
+        <div className="relative flex items-center justify-center">
+          <div
+            className="absolute rounded-full animate-ping"
+            style={{
+              width: 88, height: 88,
+              border: '1.5px solid rgba(255,255,255,0.35)',
+              animationDuration: '2s',
+            }}
+          />
+          <div
+            className="absolute rounded-full animate-ping"
+            style={{
+              width: 64, height: 64,
+              border: '1.5px solid rgba(0,153,255,0.5)',
+              animationDuration: '2s',
+              animationDelay: '0.4s',
+            }}
+          />
+          <div
+            className="rounded-full flex items-center justify-center"
+            style={{
+              width: 44, height: 44,
+              background: 'rgba(255,255,255,0.10)',
+              border: '1.5px solid rgba(255,255,255,0.4)',
+              backdropFilter: 'blur(6px)',
+            }}
+          >
+            {/* Paintbrush icon */}
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.85)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M18.37 2.63 14 7l-1.59-1.59a2 2 0 0 0-2.82 0L8 7l9 9 1.59-1.59a2 2 0 0 0 0-2.82L17 10l4.37-4.37a2.12 2.12 0 1 0-3-3Z"/>
+              <path d="M9 8c-2 3-4 3.5-7 4l8 10c2-1 6-5 6-7"/>
+              <path d="M14.5 17.5 4.5 15"/>
+            </svg>
+          </div>
+        </div>
+        <p
+          className="text-[13px] font-medium tracking-[0.12em] uppercase"
+          style={{
+            color: 'rgba(255,255,255,0.7)',
+            textShadow: '0 1px 8px rgba(0,0,0,0.5)',
+            letterSpacing: '0.14em',
+          }}
+        >
+          Move cursor to reveal
+        </p>
+      </div>
+
       {/* Card overlay content */}
       {children && (
         <div className="absolute inset-0 flex flex-col justify-end pointer-events-none">
