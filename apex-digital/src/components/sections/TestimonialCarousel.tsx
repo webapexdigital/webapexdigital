@@ -45,6 +45,12 @@ const TESTIMONIALS: Testimonial[] = [
     by: "Neha Kapoor, Co-founder at VibeStudio",
     imgSrc: "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1",
   },
+  {
+    tempId: 7,
+    testimonial: "The website looks great! I really liked the content and overall presentation. Thanks for the excellent work and support.",
+    by: "Nandoos Garments, Kerala · via Instagram",
+    imgSrc: "/nandoos-garments-feedback.png",
+  },
 ];
 
 export default function TestimonialCarousel() {
